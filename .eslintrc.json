@@ -22,5 +22,10 @@
         "react"
     ],
     "rules": {
+        "eol-last": "off",
+        "linebreak-style": "off",
+        "indent": "off",
+        "semi": "off",
+        "no-undef": "warn"
     }
 }
