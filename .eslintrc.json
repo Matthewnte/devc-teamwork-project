@@ -26,6 +26,9 @@
         "linebreak-style": "off",
         "indent": "off",
         "semi": "off",
-        "no-undef": "warn"
+        "no-undef": "warn",
+        "quote-props": "off",
+        "quotes": "off",
+        "no-unused-vars": "warn"
     }
 }
