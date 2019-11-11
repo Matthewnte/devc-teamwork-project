@@ -29,6 +29,8 @@
         "no-undef": "warn",
         "quote-props": "off",
         "quotes": "off",
-        "no-unused-vars": "warn"
+        "no-unused-vars": "warn",
+        "consistent-return": "off",
+        "no-return-assign": "off"
     }
 }
