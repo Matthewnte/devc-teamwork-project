@@ -5,10 +5,10 @@ module.exports = (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, 'reqbodypassword');
         const userId = decodedToken.userId;
-        if (req.body.userId && req.body.userId !== userId) {
+        if (userId === 1) {
             res.json({
                 status: 'error',
-                error: 'Not authorized',
+                error: 'Not an admin',
             })
         } else {
             next();
