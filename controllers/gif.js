@@ -68,7 +68,7 @@ exports.deleteGif = (req, res) => {
     })
 };
 
-exports.commentOnColleguesGif = (req, res, next) => {
+exports.commentOnColleguesGif = (req, res) => {
     const { id } = req.params;
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'reqbodypassword');
@@ -79,6 +79,11 @@ exports.commentOnColleguesGif = (req, res, next) => {
         pool.query('SELECT title FROM gifs WHERE gif_id = $1', [id], (gifError, gifResults) => {
             const gifTitle = gifResults.rows[0].title;
             pool.query('INSERT INTO gif_comments (user_id, body, gif_id) VALUES ($1, $2, $3) RETURNING *', [userId, comment, id], (err, results) => {
+                if (err) {
+                    return res.status(400).json({
+                        error: err,
+                    })
+                }
                 res.status(201).json({
                     status: 'success',
                     data: {
