@@ -1,10 +1,13 @@
 const express = require('express');
 
-const router = express.Router();
-const gifCtrl = require('../controllers/gif')
+const multer = require('../middleware/multer-config');
 
-router.post('/', gifCtrl.creatGif);
-router.post('/:id', gifCtrl.deleteGif);
-router.post('/:id/comment', gifCtrl.commentOnGif);
+const router = express.Router();
+const gifCtrl = require('../controllers/gif');
+const auth = require('../middleware/auth');
+
+router.post('/', auth, multer, gifCtrl.creatGif);
+router.post('/:id', auth, gifCtrl.deleteGif);
+router.post('/:id/comment', auth, gifCtrl.commentOnGif);
 
 module.exports = router;
