@@ -55,9 +55,41 @@ exports.updateArticle = (req, res) => {
                 })
             } else {
                 res.status(401).json({
-                    error: 'Only owner of post can delete post',
+                    error: 'Only owner of post can update post',
                 })
             }
         })
     })
 }
+
+exports.deleteArticle = (req, res) => {
+    const { id } = req.params;
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'reqbodypassword');
+    const { email } = decodedToken.user;
+    pool.query('SELECT userId FROM users WHERE email = $1', [email], (userError, userResult) => {
+        const userId = userResult.rows[0].userid;
+        pool.query('SELECT user_id FROM articles WHERE article_id = $1', [id], (rowError, rowResult) => {
+            const rowUserId = rowResult.rows[0].user_id;
+            if (userId === rowUserId) {
+                pool.query('DELETE FROM articles WHERE article_id = $1', [id], (error) => {
+                    if (error) {
+                        return res.status(400).json(
+                            error,
+                        )
+                    }
+                    res.status(200).json({
+                        status: 'success',
+                        data: {
+                            message: 'Article successfully deleted',
+                        },
+                    })
+                })
+            } else {
+                res.status(401).json({
+                    error: 'Only owner of post can delete post',
+                })
+            }
+        })
+    })
+};
