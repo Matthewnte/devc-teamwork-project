@@ -13,8 +13,8 @@ exports.creatGif = (req, res) => {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, 'reqbodypassword');
         const { email } = decodedToken.user;
-        pool.query('SELECT userId FROM users WHERE email = $1', [email], (userIdError, userIdRes) => {
-            const userId = userIdRes.rows[0].userid;
+        pool.query('SELECT userId FROM users WHERE email = $1', [email], (userIdError, userResult) => {
+            const userId = userResult.rows[0].userid;
             const { title } = req.body;
             pool.query('INSERT INTO gifs (user_id, title, image_url) VALUES ($1, $2, $3) RETURNING *', [userId, title, results.url], (error, gifResults) => {
                 if (error) {
@@ -42,8 +42,8 @@ exports.deleteGif = (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, 'reqbodypassword');
     const { email } = decodedToken.user;
-    pool.query('SELECT userId FROM users WHERE email = $1', [email], (userIdError, userIdRes) => {
-        const userId = userIdRes.rows[0].userid;
+    pool.query('SELECT userId FROM users WHERE email = $1', [email], (userIdError, userResult) => {
+        const userId = userResult.rows[0].userid;
         pool.query('SELECT user_id FROM gifs WHERE gif_id = $1', [id], (rowError, rowResult) => {
             const rowUserId = rowResult.rows[0].user_id;
             if (userId === rowUserId) {
@@ -68,6 +68,27 @@ exports.deleteGif = (req, res) => {
     })
 };
 
-exports.commentOnGif = (req, res, next) => {
-
+exports.commentOnColleguesGif = (req, res, next) => {
+    const { id } = req.params;
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'reqbodypassword');
+    const { email } = decodedToken.user;
+    const { comment } = req.body;
+    pool.query('SELECT userId FROM users WHERE email = $1', [email], (userError, userResult) => {
+        const userId = userResult.rows[0].userid;
+        pool.query('SELECT title FROM gifs WHERE gif_id = $1', [id], (gifError, gifResults) => {
+            const gifTitle = gifResults.rows[0].title;
+            pool.query('INSERT INTO gif_comments (user_id, body, gif_id) VALUES ($1, $2, $3) RETURNING *', [userId, comment, id], (err, results) => {
+                res.status(201).json({
+                    status: 'success',
+                    data: {
+                        message: 'comment successfully created',
+                        createdOn: results.rows[0].publish_date,
+                        gifTitle,
+                        comment,
+                    },
+                })
+            })
+        })
+    })
 };

@@ -8,6 +8,6 @@ const auth = require('../middleware/auth');
 
 router.post('/', auth, multer, gifCtrl.creatGif);
 router.delete('/:id', auth, gifCtrl.deleteGif);
-router.post('/:id/comment', auth, gifCtrl.commentOnGif);
+router.post('/:id/comment', auth, gifCtrl.commentOnColleguesGif);
 
 module.exports = router;
