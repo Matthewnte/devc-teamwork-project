@@ -93,3 +93,35 @@ exports.deleteArticle = (req, res) => {
         })
     })
 };
+
+exports.commentOnArticle = (req, res) => {
+    const { id } = req.params;
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, 'reqbodypassword');
+    const { email } = decodedToken.user;
+    const { comment } = req.body;
+    pool.query('SELECT userId FROM users WHERE email = $1', [email], (userError, userResult) => {
+        const userId = userResult.rows[0].userid;
+        pool.query('SELECT title, body FROM articles WHERE article_id = $1', [id], (articleError, articleResults) => {
+            const articleTitle = articleResults.rows[0].title;
+            const article = articleResults.rows[0].body;
+            pool.query('INSERT INTO article_comments (user_id, body, article_id) VALUES ($1, $2, $3) RETURNING *', [userId, comment, id], (err, results) => {
+                if (err) {
+                    return res.status(400).json({
+                        error: err,
+                    })
+                }
+                res.status(201).json({
+                    status: 'success',
+                    data: {
+                        message: 'Comment successfully created',
+                        createdOn: results.rows[0].publish_date,
+                        articleTitle,
+                        article,
+                        comment,
+                    },
+                })
+            })
+        })
+    })
+}
