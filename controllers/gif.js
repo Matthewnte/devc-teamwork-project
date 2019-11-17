@@ -104,7 +104,7 @@ exports.viewOneGif = (req, res) => {
         FROM gifs
         JOIN gif_comments
         ON gifs.gif_id = gif_comments.gif_id
-        WHERE gifs.gif_id = $1;`, 
+        WHERE gifs.gif_id = $1;`,
         [id], (error, results) => {
         if (error) {
             return res.status(400).json({
@@ -125,7 +125,7 @@ exports.viewOneGif = (req, res) => {
                 title: results.rows[0].title,
                 url: results.rows[0].image_url,
                 comments,
-            }
+            },
         })
     })
 };

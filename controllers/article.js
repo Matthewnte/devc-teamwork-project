@@ -125,3 +125,35 @@ exports.commentOnArticle = (req, res) => {
         })
     })
 }
+
+exports.readOneArticle = (req, res) => {
+    const { id } = req.params;
+    pool.query(`SELECT articles.article_id, articles.publish_date, articles.title, articles.body, article_comments.id, article_comments.user_id, article_comments.body
+        FROM articles
+        JOIN article_comments
+        ON articles.article_id = article_comments.article_id
+        WHERE articles.article_id = $1`,
+        [id], (error, results) => {
+        if (error) {
+            return res.status(400).json({
+                error,
+            })
+        }
+        const comments = results.rows.map((row) => ({
+                commentId: row.id,
+                authorId: row.user_id,
+                comment: row.body,
+            }
+        ))
+        res.status(200).json({
+            status: 'success',
+            data: {
+                id: results.rows[0].article_id,
+                createdOn: results.rows[0].publish_date,
+                title: results.rows[0].title,
+                article: results.rows[0].body,
+                comments,
+            },
+        })
+    })
+};
