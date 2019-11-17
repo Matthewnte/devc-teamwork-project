@@ -6,25 +6,26 @@ const pool = require('../connectDB');
 exports.creatUser = (req, res) => {
     bcrypt.hash(req.body.password, 10).then((hash) => {
         const password = hash;
-        // eslint-disable-next-line object-curly-newline
         const { firstName, lastName, email, gender, jobRole, department, address } = req.body;
-        pool.query('INSERT INTO users (firstName, lastName, email, password, gender, jobRole, department, address) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [firstName, lastName, email, password, gender, jobRole, department, address], (error) => {
+        pool.query(`INSERT INTO users (firstName, lastName, email, password, gender, jobRole, department, address) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`, [firstName, lastName, email, password, gender, jobRole, department, address], (error, results) => {
             if (error) {
                 return res.status(400).json({
                     error,
                 })
             }
             const pwd = req.body.password;
-            jwt.sign({ email, pwd }, 'reqbodypassword', (tokenError, token) => {
+            jwt.sign({ email, pwd }, 'reqbodypassword', (tokenError) => {
+                if (tokenError) {
+                    return res.status(500).json(tokenError);
+                }
                 const userToken = req.headers.authorization.split(' ')[1];
-                const decodedToken = jwt.verify(token, 'reqbodypassword');
-                const { userId } = decodedToken;
                 res.status(201).json({
                     status: 'success',
                     data: {
                         message: 'User account successfully created',
                         token: userToken,
-                        userId,
+                        userId: results.rows[0].userid,
                     },
                 })
             })
@@ -38,7 +39,7 @@ exports.creatUser = (req, res) => {
     );
 };
 
-exports.signin = (req, res, next) => {
+exports.signin = (req, res) => {
     const user = {
         email: req.body.email,
         password: req.body.password,

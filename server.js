@@ -1,6 +1,3 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-restricted-globals */
-/* eslint-disable arrow-parens */
 const http = require('http');
 const app = require('./app');
 
