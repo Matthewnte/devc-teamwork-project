@@ -97,3 +97,35 @@ exports.commentOnColleguesGif = (req, res) => {
         })
     })
 };
+
+exports.viewOneGif = (req, res) => {
+    const { id } = req.params;
+    pool.query(`SELECT gifs.gif_id, gifs.publish_date, gifs.title, gifs.image_url, gif_comments.id, gif_comments.user_id, gif_comments.body
+        FROM gifs
+        JOIN gif_comments
+        ON gifs.gif_id = gif_comments.gif_id
+        WHERE gifs.gif_id = $1;`, 
+        [id], (error, results) => {
+        if (error) {
+            return res.status(400).json({
+                error,
+            })
+        }
+        const comments = results.rows.map((row) => ({
+                commentId: row.id,
+                authorId: row.user_id,
+                comment: row.body,
+            }
+        ))
+        res.status(200).json({
+            status: 'success',
+            data: {
+                id: results.rows[0].gif_id,
+                createdOn: results.rows[0].publish_date,
+                title: results.rows[0].title,
+                url: results.rows[0].image_url,
+                comments,
+            }
+        })
+    })
+};
