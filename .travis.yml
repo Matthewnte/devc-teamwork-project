@@ -1,0 +1,18 @@
+langusge: node_js
+node_js: 
+- 10.15.3
+cache: npm
+
+before_install:
+install:
+  -npm ci
+
+script:
+  -npm test
+  -npm run build
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  on:
+    branch: develop

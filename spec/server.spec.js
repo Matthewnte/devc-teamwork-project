@@ -5,10 +5,10 @@ const Request = require('request');
 
 describe('Unit test for all api endpoints', () => {
     let server;
-    beforeEach(() => {
+    beforeAll(() => {
         server = require('../server')
     })
-    afterEach(() => {
+    afterAll(() => {
         server.close();
     })
 
