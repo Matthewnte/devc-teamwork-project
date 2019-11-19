@@ -1,0 +1,6 @@
+{
+    "name": "Teamwork api",
+    "description": "A set of API endpoints with data persisting, using a PostgreSQL database. The endpoints are to be secured with JSON Web Token (JWT)",
+    "repository": "https://github.com/Matthewnte/devc-teamwork-project",
+    "keywords": ["node", "express"]
+}
