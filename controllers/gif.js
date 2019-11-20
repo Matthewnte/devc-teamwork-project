@@ -129,3 +129,39 @@ exports.viewOneGif = (req, res) => {
         })
     })
 };
+
+exports.flagGifAsInappropriate = (req, res) => {
+    const { id } = req.params;
+    pool.query(`UPDATE gifs
+    SET inappropriate = NOT inappropriate
+    WHERE gif_id = $1 RETURNING *`, [id], (error, results) => {
+        if (error) {
+            return res.status(400).json({
+                status: 'error',
+                error,
+            })
+        }
+        res.status(200).json({
+            status: 'success',
+            isInappropriate: results.rows[0].inappropriate,
+        })
+    })
+}
+
+exports.flagGifCommentAsInappropriate = (req, res) => {
+    const { commentId } = req.params;
+    pool.query(`UPDATE gif_comments
+    SET inappropriate = NOT inappropriate
+    WHERE id = $1 RETURNING *`, [commentId], (error, results) => {
+        if (error) {
+            return res.status(400).json({
+                status: 'error',
+                error,
+            })
+        }
+        res.status(200).json({
+            status: 'success',
+            isInappropriate: results.rows[0].inappropriate,
+        })
+    })
+}

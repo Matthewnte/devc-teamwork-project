@@ -10,5 +10,7 @@ router.post('/', auth, multer, gifCtrl.creatGif);
 router.get('/:id', auth, gifCtrl.viewOneGif);
 router.delete('/:id', auth, gifCtrl.deleteGif);
 router.post('/:id/comment', auth, gifCtrl.commentOnColleguesGif);
+router.post('/:id/comment/:commentId/inappropriate', auth, gifCtrl.flagGifCommentAsInappropriate);
+router.post('/:id/inappropriate', auth, gifCtrl.flagGifAsInappropriate);
 
 module.exports = router;

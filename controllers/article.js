@@ -157,3 +157,39 @@ exports.readOneArticle = (req, res) => {
         })
     })
 };
+
+exports.flagArticleAsInappropriate = (req, res) => {
+    const { id } = req.params;
+    pool.query(`UPDATE articles
+    SET inappropriate = NOT inappropriate
+    WHERE article_id = $1 RETURNING *`, [id], (error, results) => {
+        if (error) {
+            return res.status(400).json({
+                status: 'error',
+                error,
+            })
+        }
+        res.status(200).json({
+            status: 'success',
+            isInappropriate: results.rows[0].inappropriate,
+        })
+    })
+}
+
+exports.flagArticleCommentAsInappropriate = (req, res) => {
+    const { commentId } = req.params;
+    pool.query(`UPDATE article_comments
+    SET inappropriate = NOT inappropriate
+    WHERE id = $1 RETURNING *`, [commentId], (error, results) => {
+        if (error) {
+            return res.status(400).json({
+                status: 'error',
+                error,
+            })
+        }
+        res.status(200).json({
+            status: 'success',
+            isInappropriate: results.rows[0].inappropriate,
+        })
+    })
+}
