@@ -8,7 +8,12 @@
   },
   "main": "server.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "heroku-postbuild": "npm install --production"
+  },
+  "engines": {
+    "node": "10.15.3",
+    "npm": "6.4.1"
   },
   "author": "Matthew Nte",
   "license": "ISC",
